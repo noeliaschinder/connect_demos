@@ -24,6 +24,8 @@
         <input type="hidden" name="responseFailURL" value="http://localhost/connect/redirect_mode/result.php"/>
         <input type="hidden" name="responseSuccessURL" value="http://localhost/connect/redirect_mode/result.php"/>
 
+        <!--input type="hidden" name="numberOfInstallments" value="6"/-->
+
         <!--input type="hidden" name="assignToken" value="true"/>
         <input type="hidden" name="tokenType" value="MULTIPAY"/-->
 

@@ -38,9 +38,40 @@ function getSharedSecret() {
 }
 
 function getChargeTotal() {
-    return "1.00";
+    return "100.00";
 }
 
 function getCurrency() {
+   // ARG Pesos
     return "032";
+}
+
+function validateGatewayHash($responsedata, $isNotify) {
+   if (empty($responsedata) || !isset($responsedata['oid'])) {
+       //No valid transaction data was passed to validate the order!
+       return false;
+   }
+   $return = true;
+   $storename = getStoreId();
+   $sharedsecret = getSharedSecret();
+
+   $chargetotal = $responsedata['chargetotal'];
+   $txndatetime = $responsedata['txndatetime'];
+   $approvalcode = $responsedata['approval_code'];
+   $currencyCode = $responsedata['currency'];
+
+   if ($isNotify == true) {
+       $hashValue = hash("sha256", bin2hex($chargetotal . $sharedsecret . $currencyCode . $txndatetime . $storename . $approvalcode));
+       if ($hashValue != $responsedata['notification_hash']) {
+           //Invalid Notification Hash received from gateway
+           $return = false;
+       }
+   } else {
+       $hashValue = hash("sha256", bin2hex($sharedsecret . $approvalcode . $chargetotal . $currencyCode . $txndatetime . $storename));
+       if ($hashValue != $responsedata['response_hash']) {
+           //Invalid Response Hash received from gateway
+           $return = false;
+       }
+   }
+   return $return;
 }
